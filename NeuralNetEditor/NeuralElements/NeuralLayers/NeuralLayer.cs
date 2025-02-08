@@ -37,26 +37,50 @@ namespace NeuralNetEditor.NeuralElements.NeuralLayers
         }
 
         public byte InputSize { get; protected set; }
+        public byte OutputSize { get; protected set; }
         public List<Connection> InConnections { get; } = new List<Connection>();
         public List<Connection> OutConnections { get; } = new List<Connection>();
         public Canvas DrawableLayer { get; protected set; } = null!;
         protected bool isSelected;
-        public bool getIsSelected() {
-            return isSelected;
+        public bool IsSelected {
+            get => isSelected;
+            set {
+                if (isSelected != value)
+                {
+                    isSelected = value;
+                    if (isSelected)
+                    {
+                        DrawableLayer.Background = new SolidColorBrush(Colors.LightSeaGreen);
+                    }
+                    else
+                    {
+                        DrawableLayer.Background = new SolidColorBrush(Colors.White);
+                    }
+                }
+            }
         }
-        public void SetIsSelected(bool isSelected)
+        protected bool isError;
+        public bool IsError
         {
-            this.isSelected = isSelected;
-            if (isSelected)
+            get => isError;
+            set
             {
-                DrawableLayer.Background = new SolidColorBrush(Colors.LightSeaGreen);
-            }
-            else
-            {
-                DrawableLayer.Background = new SolidColorBrush(Colors.White);
+                if (isError != value)
+                {
+                    isError = value;
+                    if (isError)
+                    {
+                        DrawableLayer.Background = new SolidColorBrush(Colors.Red);
+                    }
+                    else
+                    {
+                        DrawableLayer.Background = new SolidColorBrush(Colors.White);
+                    }
+                }
             }
         }
+        public abstract string ConvertToSafeRecord(double xCameraOffset, double yCameraOffset);
         public abstract string ConvertToKeras();
-        public abstract bool CheckPreviosLayerCompatibility(NeuralLayer previosLayer);
+        public abstract List<NeuralLayer> CheckPreviosLayersCompatibility();
     }
 }

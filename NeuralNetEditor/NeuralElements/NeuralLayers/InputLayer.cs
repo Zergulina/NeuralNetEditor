@@ -22,6 +22,7 @@ namespace NeuralNetEditor.NeuralElements.NeuralLayers
             get => inputSize;
             set {
                 inputSize = value;
+                OutputSize = inputSize;
                 while (InputShape.Count != inputSize)
                 {
                     if (InputShape.Count > inputSize)
@@ -54,15 +55,20 @@ namespace NeuralNetEditor.NeuralElements.NeuralLayers
             };
             DrawableLayer.Children.Add(inputShapeTextBlock);
         }
-
-        public override string ConvertToKeras()
+        public override string ConvertToSafeRecord(double xCameraOffset, double yCameraOffset)
         {
-            throw new NotImplementedException();
+            var result = $"Input {inputSize}";
+            foreach (var item in InputShape) {
+                result += " " + item;
+            }
+            result += $" {Canvas.GetLeft(DrawableLayer) + xCameraOffset} {Canvas.GetTop(DrawableLayer) + yCameraOffset}";
+            return result;
         }
+        public override string ConvertToKeras() => $"keras.Input(shape=({string.Concat(InputShape.Select(x => x + ", "))}))";
 
-        public override bool CheckPreviosLayerCompatibility(NeuralLayer previosLayer)
+        public override List<NeuralLayer> CheckPreviosLayersCompatibility()
         {
-            throw new NotImplementedException();
+            return InConnections.Select(x => x.StartLayer).ToList();
         }
     }
 }

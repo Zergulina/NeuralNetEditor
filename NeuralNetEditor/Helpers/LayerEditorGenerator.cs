@@ -60,12 +60,12 @@ namespace NeuralNetEditor.Helpers
                 try
                 {
                     var inputSize = byte.Parse(inputSizeTextBox.Text);
-                    if (inputSize < 1 || inputSize > 4) throw new Exception();
+                    if (inputSize < 1 || inputSize > 3) throw new Exception();
                     inputLayer.InputSize = inputSize;
                 }
                 catch
                 {
-                    MessageBox.Show("Необходимо число от 1 до 4 включительно", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Необходимо число от 1 до 3 включительно", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 inputShapeStackPanel.Children.Clear();
                 foreach (var inputShapeUnit in inputLayer.InputShape)

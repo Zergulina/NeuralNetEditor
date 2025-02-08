@@ -49,7 +49,8 @@ namespace NeuralNetEditor.NeuralElements.NeuralLayers
         public ObservableCollection<uint> KernelSize { get; private set; } = new ObservableCollection<uint>(new uint[2]);
         public Conv2DLayer()
         {
-            InputSize = 1;
+            InputSize = 3;
+            OutputSize = 3;
 
             TextBlock titleTextBlock = new TextBlock();
             titleTextBlock.Text = "Conv2D";
@@ -87,14 +88,17 @@ namespace NeuralNetEditor.NeuralElements.NeuralLayers
             Canvas.SetTop(activationFunctionTextBox, 55);
             DrawableLayer.Children.Add(activationFunctionTextBox);
         }
-        public override string ConvertToKeras()
+        public override string ConvertToSafeRecord(double xCameraOffset, double yCameraOffset) => $"Conv2D {NeuronAmount} {KernelSize[0]} {KernelSize[1]} {activationFunction} {Canvas.GetLeft(DrawableLayer) - xCameraOffset} {Canvas.GetTop(DrawableLayer) - yCameraOffset}";
+        public override string ConvertToKeras() => $"layers.Conv2D({NeuronAmount}, ({KernelSize[0]}, {KernelSize[1]}), activation=\'{ActivationFunction}\')";
+        public override List<NeuralLayer> CheckPreviosLayersCompatibility()
         {
-            throw new NotImplementedException();
-        }
+            var errorPrevLayers = new List<NeuralLayer>();
+            foreach (var prevLayer in InConnections.Select(x => x.StartLayer))
+            {
+                if (prevLayer.OutputSize != 3) errorPrevLayers.Add(prevLayer);
+            }
 
-        public override bool CheckPreviosLayerCompatibility(NeuralLayer previosLayer)
-        {
-            throw new NotImplementedException();
+            return errorPrevLayers;
         }
     }
 }

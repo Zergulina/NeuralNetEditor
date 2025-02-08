@@ -16,7 +16,8 @@ namespace NeuralNetEditor.NeuralElements.NeuralLayers
         public ObservableCollection<uint> KernelSize { get; private set; } = new ObservableCollection<uint>(new uint[2]);
         public MaxPooling2DLayer()
         {
-            InputSize = 1;
+            InputSize = 3;
+            OutputSize = 3;
 
             TextBlock titleTextBlock = new TextBlock();
             titleTextBlock.Text = "MaxPooling2D";
@@ -33,14 +34,18 @@ namespace NeuralNetEditor.NeuralElements.NeuralLayers
             Canvas.SetTop(kernelTextBlock, 25);
             DrawableLayer.Children.Add(kernelTextBlock);
         }
-        public override string ConvertToKeras()
-        {
-            throw new NotImplementedException();
-        }
+        public override string ConvertToSafeRecord(double xCameraOffset, double yCameraOffset) => $"MaxPooling2D {KernelSize[0]} {KernelSize[1]} {Canvas.GetLeft(DrawableLayer) - xCameraOffset} {Canvas.GetTop(DrawableLayer) - yCameraOffset}";
+        public override string ConvertToKeras() => $"layers.MaxPooling2D(({KernelSize[0]}, {KernelSize[1]}))";
 
-        public override bool CheckPreviosLayerCompatibility(NeuralLayer previosLayer)
+        public override List<NeuralLayer> CheckPreviosLayersCompatibility()
         {
-            throw new NotImplementedException();
+            var errorPrevLayers = new List<NeuralLayer>();
+            foreach(var prevLayer in InConnections.Select(x => x.StartLayer))
+            {
+                if (prevLayer.OutputSize != 3) errorPrevLayers.Add(prevLayer);
+            }
+
+            return errorPrevLayers;
         }
     }
 }

@@ -47,6 +47,7 @@ namespace NeuralNetEditor.NeuralElements.NeuralLayers
         public DenseLayer()
         {
             InputSize = 1;
+            OutputSize = 1;
 
             TextBlock titleTextBlock = new TextBlock();
             titleTextBlock.Text = "Dense";
@@ -74,14 +75,18 @@ namespace NeuralNetEditor.NeuralElements.NeuralLayers
             Canvas.SetTop(activationFunctionTextBox, 40);
             DrawableLayer.Children.Add(activationFunctionTextBox);
         }
-        public override string ConvertToKeras()
-        {
-            throw new NotImplementedException();
-        }
+        public override string ConvertToSafeRecord(double xCameraOffset, double yCameraOffset) => $"Dense {neuronAmount} {activationFunction} {Canvas.GetLeft(DrawableLayer) - xCameraOffset} {Canvas.GetTop(DrawableLayer) - yCameraOffset}";
+        public override string ConvertToKeras() => $"layers.Dense({NeuronAmount}, activation=\'{ActivationFunction}\')";
 
-        public override bool CheckPreviosLayerCompatibility(NeuralLayer previosLayer)
+        public override List<NeuralLayer> CheckPreviosLayersCompatibility()
         {
-            throw new NotImplementedException();
+            var errorPrevLayers = new List<NeuralLayer>();
+            foreach (var prevLayer in InConnections.Select(x => x.StartLayer))
+            {
+                if (prevLayer.OutputSize != 1) errorPrevLayers.Add(prevLayer);
+            }
+
+            return errorPrevLayers;
         }
     }
 }

@@ -22,6 +22,15 @@ namespace NeuralNetEditor.NeuralElements
             StartLayer = startLayer;
             EndPoint = new Point(Canvas.GetLeft(startLayer.DrawableLayer) + startLayer.DrawableLayer.Width / 2, Canvas.GetTop(startLayer.DrawableLayer) + startLayer.DrawableLayer.Height / 2);
         }
+
+        public Connection(NeuralLayer startLayer, NeuralLayer endLayer)
+        {
+            DrawableConnection = new Path();
+            DrawableConnection.Stroke = Brushes.Black;
+            DrawableConnection.StrokeThickness = 2;
+            StartLayer = startLayer;
+            EndLayer = endLayer;
+        }
         private Point startPoint;
         public Point StartPoint {
             get => startPoint;
